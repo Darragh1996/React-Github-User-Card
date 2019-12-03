@@ -13,7 +13,7 @@ export default class List extends React.Component {
   componentDidMount() {
     console.log("Component Mounted.");
     axios
-      .get("https://api.github.com/users/Darragh1996/followers")
+      .get(`https://api.github.com/users/${this.props.user}/followers`)
       .then(res => {
         console.log(res);
         this.setState({
@@ -25,9 +25,28 @@ export default class List extends React.Component {
       });
   }
 
+  componentDidUpdate(oldProps) {
+    if (oldProps.user == this.props.user) {
+      console.log(oldProps);
+    } else {
+      axios
+        .get(`https://api.github.com/users/${this.props.user}/followers`)
+        .then(res => {
+          console.log(res);
+          this.setState({
+            users: res.data
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  }
+
   render() {
     return (
       <div>
+        <h2>{this.props.user}'s followers</h2>
         {this.state.users.map(user => {
           return <Card user={user} key={user.id} />;
         })}
